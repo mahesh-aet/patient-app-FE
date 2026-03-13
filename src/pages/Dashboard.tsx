@@ -1,15 +1,31 @@
 import { Button, Grid, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { PatientTable } from "../components/patient/PatientTable";
 import PatientForm from "../components/patient/PatientForm";
+import { deletePatientThunk, fetchPatientsThunk } from "../store/patientThunk";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 
 export const DashBoard = () => {
   const [showCreateForm, setShowCreateForm] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
+  const { patientList, loading, error } = useAppSelector(
+    (state) => state.patient,
+  );
+
   const handleFormDisplay = () => {
     setShowCreateForm(true);
   };
+
+  const handleDeletePatient = (id: number) => {
+    void dispatch(deletePatientThunk(id));
+  };
+
+  useEffect(() => {
+    void dispatch(fetchPatientsThunk());
+  }, [dispatch]);
+
   return (
     <Grid container flexDirection={"column"} spacing={2}>
       <Grid sx={{ my: 1, backgroundColor: "#f3f3f3" }}>
@@ -29,7 +45,13 @@ export const DashBoard = () => {
         )}
       </Grid>
 
-      <PatientTable />
+      {loading && <Typography>Loading patients...</Typography>}
+      {error && <Typography color="error">{error}</Typography>}
+
+      <PatientTable
+        PatientData={patientList}
+        onDeletePatient={handleDeletePatient}
+      />
     </Grid>
   );
 };

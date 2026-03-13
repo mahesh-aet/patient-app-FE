@@ -3,7 +3,8 @@ import * as Yup from "yup";
 import { TextField, Button, Grid, Typography } from "@mui/material";
 import type { IPatientRequest } from "../../type/patient/patientRequest";
 import type { FC } from "react";
-// import { createPatient } from "../api/patientApi";
+import { useAppDispatch } from "../../store/hooks";
+import { createPatientThunk } from "../../store/patientThunk";
 
 const validationSchema = Yup.object({
   firstName: Yup.string().required("Required"),
@@ -17,6 +18,8 @@ interface IPatientForm {
 }
 
 const PatientForm: FC<IPatientForm> = ({ setShowCreateForm }) => {
+  const dispatch = useAppDispatch();
+
   const initialValues: IPatientRequest = {
     firstName: "",
     lastName: "",
@@ -29,9 +32,8 @@ const PatientForm: FC<IPatientForm> = ({ setShowCreateForm }) => {
   };
 
   const handleSubmit = async (values: IPatientRequest) => {
-    console.log(values);
+    await dispatch(createPatientThunk(values)).unwrap();
     setShowCreateForm(false);
-    // await createPatient(values);
     // resetForm();
     // onSuccess();
   };
