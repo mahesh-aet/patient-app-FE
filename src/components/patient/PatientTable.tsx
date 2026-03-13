@@ -1,8 +1,18 @@
 import type { FC } from "react";
+import { useState } from "react";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { DataGrid, type GridColDef, type GridRowModel } from "@mui/x-data-grid";
+import EditIcon from "@mui/icons-material/Edit";
+import {
+  DataGrid,
+  GridRowModes,
+  type GridColDef,
+  type GridRowId,
+  type GridRowModel,
+  type GridRowModesModel,
+} from "@mui/x-data-grid";
 
 import type { IPatientRequest } from "../../type/patient/patientRequest";
 import type { IPatientResponse } from "../../type/patient/patientResponse";
@@ -20,6 +30,15 @@ export const PatientTable: FC<IPatientTable> = ({
   onUpdatePatient,
 }) => {
   const { loading } = useAppSelector((state) => state.patient);
+  const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
+
+  const handleEditPatient = (id: GridRowId) => {
+    setRowModesModel((prevModel) => ({
+      ...prevModel,
+      [id]: { mode: GridRowModes.Edit },
+    }));
+  };
+
   const columns: GridColDef[] = [
     {
       field: "id",
@@ -82,13 +101,24 @@ export const PatientTable: FC<IPatientTable> = ({
       sortable: false,
       filterable: false,
       renderCell: (params) => (
-        <IconButton
-          aria-label="delete-patient"
-          color="error"
-          onClick={() => onDeletePatient(params.row.id as number)}
-        >
-          <DeleteIcon fontSize="small" />
-        </IconButton>
+        <>
+          <Tooltip title="Edit the required cell" arrow>
+            <IconButton
+              aria-label="edit-patient"
+              color="primary"
+              onClick={() => handleEditPatient(params.row.id as number)}
+            >
+              <EditIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          <IconButton
+            aria-label="delete-patient"
+            color="error"
+            onClick={() => onDeletePatient(params.row.id as number)}
+          >
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+        </>
       ),
     },
   ];
@@ -122,6 +152,14 @@ export const PatientTable: FC<IPatientTable> = ({
       <DataGrid
         rows={PatientData}
         columns={columns}
+        sx={{
+          "& .MuiDataGrid-columnHeaderTitle": {
+            fontWeight: 700,
+          },
+        }}
+        editMode="row"
+        rowModesModel={rowModesModel}
+        onRowModesModelChange={setRowModesModel}
         processRowUpdate={processRowUpdate}
         onProcessRowUpdateError={(error) => {
           console.error("Failed to update patient", error);
