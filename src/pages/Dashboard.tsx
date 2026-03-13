@@ -1,4 +1,5 @@
-import { Button, Grid, Typography } from "@mui/material";
+/* eslint-disable react-hooks/set-state-in-effect */
+import { Alert, Button, Grid, Snackbar, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useEffect, useState } from "react";
 
@@ -14,6 +15,9 @@ import { useAppDispatch, useAppSelector } from "../store/hooks";
 
 export const DashBoard = () => {
   const [showCreateForm, setShowCreateForm] = useState<boolean>(false);
+  const [isErrorToastOpen, setIsErrorToastOpen] = useState<boolean>(false);
+  const [isSuccessToastOpen, setIsSuccessToastOpen] = useState<boolean>(false);
+  const [successMessage, setSuccessMessage] = useState<string>("");
   const dispatch = useAppDispatch();
   const { patientList, loading, error } = useAppSelector(
     (state) => state.patient,
@@ -24,16 +28,47 @@ export const DashBoard = () => {
   };
 
   const handleDeletePatient = (id: number) => {
-    void dispatch(deletePatientThunk(id));
+    void dispatch(deletePatientThunk(id))
+      .unwrap()
+      .then(() => {
+        setSuccessMessage("Patient deleted successfully");
+        setIsSuccessToastOpen(true);
+      });
+  };
+
+  const handleCreateSuccess = () => {
+    setSuccessMessage("Patient added successfully");
+    setIsSuccessToastOpen(true);
   };
 
   const handleUpdatePatient = async (patientData: IPatientRequest) => {
-    return dispatch(updatePatientThunk({ patientData })).unwrap();
+    const updatedPatient = await dispatch(
+      updatePatientThunk({ patientData }),
+    ).unwrap();
+
+    setSuccessMessage("Patient updated successfully");
+    setIsSuccessToastOpen(true);
+
+    return updatedPatient;
   };
 
   useEffect(() => {
-    void dispatch(fetchPatientsThunk());
+    dispatch(fetchPatientsThunk());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (error) {
+      setIsErrorToastOpen(true);
+    }
+  }, [error]);
+
+  const handleCloseErrorToast = () => {
+    setIsErrorToastOpen(false);
+  };
+
+  const handleCloseSuccessToast = () => {
+    setIsSuccessToastOpen(false);
+  };
 
   return (
     <Grid container flexDirection={"column"} spacing={2}>
@@ -50,18 +85,50 @@ export const DashBoard = () => {
           </Button>
         )}
         {showCreateForm && (
-          <PatientForm setShowCreateForm={setShowCreateForm} />
+          <PatientForm
+            setShowCreateForm={setShowCreateForm}
+            onCreateSuccess={handleCreateSuccess}
+          />
         )}
       </Grid>
 
       {loading && <Typography>Loading patients...</Typography>}
-      {error && <Typography color="error">{error}</Typography>}
 
       <PatientTable
         PatientData={patientList}
         onDeletePatient={handleDeletePatient}
         onUpdatePatient={handleUpdatePatient}
       />
+
+      <Snackbar
+        open={isErrorToastOpen}
+        autoHideDuration={4000}
+        onClose={handleCloseErrorToast}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleCloseErrorToast}
+          severity="error"
+          variant="filled"
+        >
+          {error}
+        </Alert>
+      </Snackbar>
+
+      <Snackbar
+        open={isSuccessToastOpen}
+        autoHideDuration={3000}
+        onClose={handleCloseSuccessToast}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleCloseSuccessToast}
+          severity="success"
+          variant="filled"
+        >
+          {successMessage}
+        </Alert>
+      </Snackbar>
     </Grid>
   );
 };

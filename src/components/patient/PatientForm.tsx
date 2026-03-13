@@ -15,9 +15,13 @@ const validationSchema = Yup.object({
 
 interface IPatientForm {
   setShowCreateForm(value: boolean): void;
+  onCreateSuccess: () => void;
 }
 
-const PatientForm: FC<IPatientForm> = ({ setShowCreateForm }) => {
+const PatientForm: FC<IPatientForm> = ({
+  setShowCreateForm,
+  onCreateSuccess,
+}) => {
   const dispatch = useAppDispatch();
 
   const initialValues: IPatientRequest = {
@@ -34,8 +38,7 @@ const PatientForm: FC<IPatientForm> = ({ setShowCreateForm }) => {
   const handleSubmit = async (values: IPatientRequest) => {
     await dispatch(createPatientThunk(values)).unwrap();
     setShowCreateForm(false);
-    // resetForm();
-    // onSuccess();
+    onCreateSuccess();
   };
 
   return (
