@@ -1,4 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 
 import {
   createPatient,
@@ -13,7 +14,19 @@ interface IUpdatePatientPayload {
   patientData: IPatientRequest;
 }
 
+interface IApiErrorResponse {
+  message?: string;
+}
+
 const getErrorMessage = (error: unknown): string => {
+  if (axios.isAxiosError<IApiErrorResponse>(error)) {
+    const apiMessage = error.response?.data?.message;
+
+    if (apiMessage) {
+      return apiMessage;
+    }
+  }
+
   if (error instanceof Error) {
     return error.message;
   }
