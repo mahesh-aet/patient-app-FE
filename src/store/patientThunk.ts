@@ -1,5 +1,4 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
 
 import {
   createPatient,
@@ -9,30 +8,11 @@ import {
 } from "../api/patientApi";
 import type { IPatientRequest } from "../type/patient/patientRequest";
 import type { IPatientResponse } from "../type/patient/patientResponse";
+import { getErrorMessage } from "../util/errorHandler";
 
 interface IUpdatePatientPayload {
   patientData: IPatientRequest;
 }
-
-interface IApiErrorResponse {
-  message?: string;
-}
-
-const getErrorMessage = (error: unknown): string => {
-  if (axios.isAxiosError<IApiErrorResponse>(error)) {
-    const apiMessage = error.response?.data?.message;
-
-    if (apiMessage) {
-      return apiMessage;
-    }
-  }
-
-  if (error instanceof Error) {
-    return error.message;
-  }
-
-  return "Something went wrong";
-};
 
 export const fetchPatientsThunk = createAsyncThunk<
   IPatientResponse[],
