@@ -2,21 +2,23 @@ import type { FC } from "react";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { DataGrid, type GridColDef } from "@mui/x-data-grid";
+import { DataGrid, type GridColDef, type GridRowModel } from "@mui/x-data-grid";
 
+import type { IPatientRequest } from "../../type/patient/patientRequest";
 import type { IPatientResponse } from "../../type/patient/patientResponse";
 
 interface IPatientTable {
   PatientData: IPatientResponse[];
   onDeletePatient: (id: number) => void;
+  onUpdatePatient: (patientData: IPatientRequest) => Promise<IPatientResponse>;
 }
 
 export const PatientTable: FC<IPatientTable> = ({
   PatientData,
   onDeletePatient,
+  onUpdatePatient,
 }) => {
   const columns: GridColDef[] = [
-    // { field: "id", headerName: "ID", width: 90 },
     {
       field: "firstName",
       headerName: "First name",
@@ -82,11 +84,21 @@ export const PatientTable: FC<IPatientTable> = ({
       ),
     },
   ];
+
+  const processRowUpdate = async (newRow: GridRowModel<IPatientResponse>) => {
+    const updatedRow = newRow as IPatientResponse;
+    return onUpdatePatient(updatedRow);
+  };
+
   return (
     <Box sx={{ height: 400, width: "100%" }}>
       <DataGrid
         rows={PatientData}
         columns={columns}
+        processRowUpdate={processRowUpdate}
+        onProcessRowUpdateError={(error) => {
+          console.error("Failed to update patient", error);
+        }}
         initialState={{
           pagination: {
             paginationModel: {

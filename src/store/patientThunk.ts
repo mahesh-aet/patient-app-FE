@@ -10,7 +10,6 @@ import type { IPatientRequest } from "../type/patient/patientRequest";
 import type { IPatientResponse } from "../type/patient/patientResponse";
 
 interface IUpdatePatientPayload {
-  id: number;
   patientData: IPatientRequest;
 }
 
@@ -52,9 +51,9 @@ export const updatePatientThunk = createAsyncThunk<
   IPatientResponse,
   IUpdatePatientPayload,
   { rejectValue: string }
->("patient/updatePatient", async ({ id, patientData }, thunkApi) => {
+>("patient/updatePatient", async ({ patientData }, thunkApi) => {
   try {
-    const response = await updatePatient(id, patientData);
+    const response = await updatePatient(patientData);
     return response.data as IPatientResponse;
   } catch (error) {
     return thunkApi.rejectWithValue(getErrorMessage(error));

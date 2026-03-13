@@ -4,7 +4,12 @@ import { useEffect, useState } from "react";
 
 import { PatientTable } from "../components/patient/PatientTable";
 import PatientForm from "../components/patient/PatientForm";
-import { deletePatientThunk, fetchPatientsThunk } from "../store/patientThunk";
+import type { IPatientRequest } from "../type/patient/patientRequest";
+import {
+  deletePatientThunk,
+  fetchPatientsThunk,
+  updatePatientThunk,
+} from "../store/patientThunk";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 
 export const DashBoard = () => {
@@ -20,6 +25,10 @@ export const DashBoard = () => {
 
   const handleDeletePatient = (id: number) => {
     void dispatch(deletePatientThunk(id));
+  };
+
+  const handleUpdatePatient = async (patientData: IPatientRequest) => {
+    return dispatch(updatePatientThunk({ patientData })).unwrap();
   };
 
   useEffect(() => {
@@ -51,6 +60,7 @@ export const DashBoard = () => {
       <PatientTable
         PatientData={patientList}
         onDeletePatient={handleDeletePatient}
+        onUpdatePatient={handleUpdatePatient}
       />
     </Grid>
   );
