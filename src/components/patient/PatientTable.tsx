@@ -6,6 +6,7 @@ import { DataGrid, type GridColDef, type GridRowModel } from "@mui/x-data-grid";
 
 import type { IPatientRequest } from "../../type/patient/patientRequest";
 import type { IPatientResponse } from "../../type/patient/patientResponse";
+import { useAppSelector } from "../../store/hooks";
 
 interface IPatientTable {
   PatientData: IPatientResponse[];
@@ -18,6 +19,7 @@ export const PatientTable: FC<IPatientTable> = ({
   onDeletePatient,
   onUpdatePatient,
 }) => {
+  const { loading } = useAppSelector((state) => state.patient);
   const columns: GridColDef[] = [
     {
       field: "firstName",
@@ -40,7 +42,7 @@ export const PatientTable: FC<IPatientTable> = ({
     {
       field: "city",
       headerName: "City",
-      width: 100,
+      width: 80,
       editable: true,
     },
     {
@@ -108,6 +110,7 @@ export const PatientTable: FC<IPatientTable> = ({
         }}
         pageSizeOptions={[5]}
         disableRowSelectionOnClick
+        loading={loading}
       />
     </Box>
   );
