@@ -22,6 +22,12 @@ export const PatientTable: FC<IPatientTable> = ({
   const { loading } = useAppSelector((state) => state.patient);
   const columns: GridColDef[] = [
     {
+      field: "id",
+      headerName: "Id",
+      width: 10,
+      editable: false,
+    },
+    {
       field: "firstName",
       headerName: "First name",
       width: 100,
@@ -31,6 +37,18 @@ export const PatientTable: FC<IPatientTable> = ({
       field: "lastName",
       headerName: "Last name",
       width: 100,
+      editable: true,
+    },
+    {
+      field: "email",
+      headerName: "Email",
+      width: 120,
+      editable: true,
+    },
+    {
+      field: "phoneNumber",
+      headerName: "Phone number",
+      width: 120,
       editable: true,
     },
     {
@@ -54,19 +72,7 @@ export const PatientTable: FC<IPatientTable> = ({
     {
       field: "zipCode",
       headerName: "Zip code",
-      width: 100,
-      editable: true,
-    },
-    {
-      field: "phoneNumber",
-      headerName: "Phone number",
-      width: 100,
-      editable: true,
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      width: 100,
+      width: 80,
       editable: true,
     },
     {
@@ -87,8 +93,27 @@ export const PatientTable: FC<IPatientTable> = ({
     },
   ];
 
-  const processRowUpdate = async (newRow: GridRowModel<IPatientResponse>) => {
+  const processRowUpdate = (
+    newRow: GridRowModel<IPatientResponse>,
+    oldRow: GridRowModel<IPatientResponse>,
+  ) => {
     const updatedRow = newRow as IPatientResponse;
+    const previousRow = oldRow as IPatientResponse;
+
+    const hasRowChanged =
+      updatedRow.firstName !== previousRow.firstName ||
+      updatedRow.lastName !== previousRow.lastName ||
+      updatedRow.address !== previousRow.address ||
+      updatedRow.city !== previousRow.city ||
+      updatedRow.state !== previousRow.state ||
+      updatedRow.zipCode !== previousRow.zipCode ||
+      updatedRow.phoneNumber !== previousRow.phoneNumber ||
+      updatedRow.email !== previousRow.email;
+
+    if (!hasRowChanged) {
+      return previousRow;
+    }
+
     return onUpdatePatient(updatedRow);
   };
 
