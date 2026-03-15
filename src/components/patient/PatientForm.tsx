@@ -1,8 +1,10 @@
+import type { FC } from "react";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import { TextField, Button, Grid, Typography } from "@mui/material";
+import { TextField, Button, Grid, Typography, IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+
 import type { IPatientRequest } from "../../type/patient/patientRequest";
-import type { FC } from "react";
 import { useAppDispatch } from "../../store/hooks";
 import { createPatientThunk } from "../../store/patientThunk";
 
@@ -16,11 +18,13 @@ const validationSchema = Yup.object({
 interface IPatientForm {
   setShowCreateForm(value: boolean): void;
   onCreateSuccess: () => void;
+  handleCloseForm: () => void;
 }
 
 const PatientForm: FC<IPatientForm> = ({
   setShowCreateForm,
   onCreateSuccess,
+  handleCloseForm,
 }) => {
   const dispatch = useAppDispatch();
 
@@ -61,8 +65,17 @@ const PatientForm: FC<IPatientForm> = ({
                 borderRadius: 1,
               }}
             >
-              <Grid my={1}>
-                <Typography>Patient Create Form</Typography>
+              <Grid container width={"100%"} justifyContent={"space-between"}>
+                <Grid my={1}>
+                  <Typography variant="h6">Patient Create Form</Typography>
+                </Grid>
+                <IconButton
+                  aria-label="close-form"
+                  color="primary"
+                  onClick={handleCloseForm}
+                >
+                  <CloseIcon fontSize="small" />
+                </IconButton>
               </Grid>
 
               <Grid size={{ xs: 12 }}>

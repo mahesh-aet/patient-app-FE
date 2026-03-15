@@ -70,6 +70,10 @@ export const DashBoard = () => {
     setIsSuccessToastOpen(false);
   };
 
+  const handleCloseForm = () => {
+    setShowCreateForm(false);
+  };
+
   return (
     <Grid container flexDirection={"column"} spacing={2}>
       <Grid sx={{ my: 1, backgroundColor: "#f3f3f3" }}>
@@ -88,6 +92,7 @@ export const DashBoard = () => {
           <PatientForm
             setShowCreateForm={setShowCreateForm}
             onCreateSuccess={handleCreateSuccess}
+            handleCloseForm={handleCloseForm}
           />
         )}
       </Grid>

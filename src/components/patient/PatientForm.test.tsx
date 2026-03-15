@@ -22,6 +22,7 @@ describe("PatientForm", () => {
     const dispatchMock = jest.fn().mockReturnValue({ unwrap: unwrapMock });
     const setShowCreateFormMock = jest.fn();
     const onCreateSuccessMock = jest.fn();
+    const handleCloseForm = jest.fn();
 
     (useAppDispatch as jest.Mock).mockReturnValue(dispatchMock);
 
@@ -29,6 +30,7 @@ describe("PatientForm", () => {
       <PatientForm
         setShowCreateForm={setShowCreateFormMock}
         onCreateSuccess={onCreateSuccessMock}
+        handleCloseForm={handleCloseForm}
       />,
     );
 
