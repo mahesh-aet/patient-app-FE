@@ -174,6 +174,9 @@ export const PatientTable: FC<IPatientTable> = ({
         pageSizeOptions={[5]}
         disableRowSelectionOnClick
         loading={loading}
+        localeText={{
+          noRowsLabel: "No Patient to display",
+        }}
       />
     </Box>
   );
