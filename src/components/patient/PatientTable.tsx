@@ -39,6 +39,13 @@ export const PatientTable: FC<IPatientTable> = ({
     }));
   };
 
+  const valueFormatter = (params: string) => {
+    if (params === null || params === undefined || params === "") {
+      return "-";
+    }
+    return params;
+  };
+
   const columns: GridColDef[] = [
     {
       field: "id",
@@ -75,24 +82,28 @@ export const PatientTable: FC<IPatientTable> = ({
       headerName: "Address",
       width: 100,
       editable: true,
+      valueFormatter,
     },
     {
       field: "city",
       headerName: "City",
       width: 80,
       editable: true,
+      valueFormatter,
     },
     {
       field: "state",
       headerName: "State",
       width: 100,
       editable: true,
+      valueFormatter,
     },
     {
       field: "zipCode",
       headerName: "Zip code",
       width: 80,
       editable: true,
+      valueFormatter,
     },
     {
       field: "actions",
